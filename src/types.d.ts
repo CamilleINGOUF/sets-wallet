@@ -111,3 +111,13 @@ type ProfilesIndex = {
   activeId: string;
   profiles: ProfileMeta[];
 };
+
+type PlanExport = {
+  version: 1;
+  exportedAt: string;
+  plan: WeeklyPlan;
+  priorities: MuscleConfig[];
+  priorityRanges: PriorityRanges;
+  customExercises: Exercise[];
+  secondaryWeight: number;
+};

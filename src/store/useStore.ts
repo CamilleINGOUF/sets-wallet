@@ -2,6 +2,7 @@ import { useSyncExternalStore, useCallback, useRef } from 'react';
 import { MUSCLE_GROUPS } from '../data/muscles';
 import { PRESET_EXERCISES } from '../data/exercises';
 import { DEFAULT_RANGES } from '../data/priorities';
+import { generateDeload } from '../domain/deload';
 
 const PROFILES_KEY = 'sets-wallet-profiles';
 const STATE_PREFIX = 'sets-wallet-state';
@@ -420,7 +421,76 @@ export const actions = {
     }));
   },
 
+  generateDeload() {
+    const deloadPlan = generateDeload(state.currentPlan, state.exercises);
+    setState((s) => ({
+      ...s,
+      savedPlans: [...s.savedPlans, deloadPlan],
+    }));
+    return deloadPlan.name;
+  },
+
+  loadTemplate(days: TrainingDay[]) {
+    setState((s) => ({
+      ...s,
+      currentPlan: {
+        ...s.currentPlan,
+        id: crypto.randomUUID(),
+        createdAt: new Date().toISOString(),
+        days,
+      },
+    }));
+    lastSavedSnapshot = '';
+  },
+
   exportState(): string {
     return JSON.stringify(state, null, 2);
+  },
+
+  exportPlan(): string {
+    const customExercises = state.exercises.filter((e) => !e.id.startsWith('preset-'));
+    const payload: PlanExport = {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      plan: structuredClone(state.currentPlan),
+      priorities: structuredClone(state.musclePriorities),
+      priorityRanges: structuredClone(state.priorityRanges),
+      customExercises,
+      secondaryWeight: state.secondaryWeight,
+    };
+    return JSON.stringify(payload, null, 2);
+  },
+
+  importPlan(json: string): { ok: true } | { ok: false; error: string } {
+    try {
+      const data = JSON.parse(json) as PlanExport;
+      if (!data.version || !data.plan || !data.plan.days) {
+        return { ok: false, error: 'Invalid file format' };
+      }
+      const plan = migratePlannedExercises({
+        ...data.plan,
+        id: crypto.randomUUID(),
+        createdAt: new Date().toISOString(),
+      });
+      setState((s) => {
+        const mergedExercises = [...s.exercises];
+        const existingIds = new Set(mergedExercises.map((e) => e.id));
+        for (const ex of data.customExercises ?? []) {
+          if (!existingIds.has(ex.id)) mergedExercises.push(ex);
+        }
+        return {
+          ...s,
+          exercises: mergedExercises,
+          currentPlan: plan,
+          musclePriorities: data.priorities ?? s.musclePriorities,
+          priorityRanges: data.priorityRanges ?? s.priorityRanges,
+          secondaryWeight: data.secondaryWeight ?? s.secondaryWeight,
+        };
+      });
+      lastSavedSnapshot = '';
+      return { ok: true };
+    } catch {
+      return { ok: false, error: 'Could not parse file' };
+    }
   },
 };

@@ -6,6 +6,7 @@ import { DayCard } from './DayCard';
 import { ExercisePanel } from './ExercisePanel';
 import { SupersetView } from './SupersetView';
 import { GymCard } from './GymCard';
+import { TemplatePicker } from './TemplatePicker';
 import { computeVolume } from '../domain/volume';
 import { computeGaps, scoreExercises } from '../domain/suggestions';
 
@@ -19,6 +20,7 @@ export const WeekPlanner: React.FC = () => {
   const priorityRanges = useStore((s) => s.priorityRanges);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [view, setView] = useState<ViewMode>('list');
+  const isEmpty = plan.days.every((d) => d.exercises.length === 0);
 
   const exerciseMap = new Map(exercises.map((e) => [e.id, e]));
 
@@ -128,6 +130,7 @@ export const WeekPlanner: React.FC = () => {
           <div className="planner-header">
             <h2>{plan.name}</h2>
           </div>
+          {isEmpty && <TemplatePicker />}
           <div className="days-grid">
             {plan.days.map((day) => (
               <DayCard

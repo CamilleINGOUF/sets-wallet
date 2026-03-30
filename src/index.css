@@ -1266,6 +1266,129 @@ tr.status-over td:first-child {
   border-color: var(--text-muted);
 }
 
+/* Frequency Heatmap */
+.heatmap {
+  margin-top: 2rem;
+}
+
+.heatmap h2 {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.heatmap-scroll {
+  overflow-x: auto;
+}
+
+.heatmap-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.heatmap-table th {
+  text-align: center;
+  padding: 0.5rem 0.4rem;
+  border-bottom: 2px solid var(--border);
+  color: var(--text-muted);
+  font-weight: 500;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.heatmap-table th:first-child {
+  text-align: left;
+}
+
+.heatmap-muscle {
+  font-weight: 500;
+  padding: 0.4rem 0.6rem;
+  white-space: nowrap;
+}
+
+.heatmap-cell {
+  text-align: center;
+  padding: 0.4rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.75rem;
+  color: var(--text);
+  min-width: 40px;
+  border-radius: 3px;
+}
+
+.heatmap-freq {
+  text-align: center;
+  padding: 0.4rem;
+  border-bottom: 1px solid var(--border);
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.heatmap-warn {
+  color: var(--orange);
+}
+
+.heatmap-consecutive td.heatmap-muscle {
+  border-left: 3px solid var(--orange);
+}
+
+/* Template Picker */
+.template-picker {
+  margin-bottom: 1.25rem;
+}
+
+.template-picker h3 {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+  font-weight: 500;
+}
+
+.template-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.5rem;
+}
+
+.template-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.75rem;
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  transition: all 0.15s;
+}
+
+.template-card:hover {
+  border-color: var(--accent);
+  background: rgba(108, 140, 255, 0.06);
+}
+
+.template-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.template-desc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.template-days {
+  font-size: 0.7rem;
+  color: var(--accent);
+  margin-top: 0.15rem;
+}
+
 /* Responsive */
 @media (max-width: 600px) {
   header {

@@ -2,6 +2,7 @@ import { useStore } from '../store/useStore';
 import { computeVolume } from '../domain/volume';
 import { MUSCLE_LABELS } from '../data/muscles';
 import { PRIORITY_LABELS } from '../data/priorities';
+import { FrequencyHeatmap } from './FrequencyHeatmap';
 
 const STATUS_INDICATOR: Record<MuscleVolume['status'], string> = {
   under: '↓',
@@ -66,6 +67,7 @@ export const VolumeDashboard: React.FC = () => {
         <span>Training days: {totalDays}</span>
         <span>Avg sets/session: {totalDays > 0 ? (totalSets / totalDays).toFixed(1) : 0}</span>
       </div>
+      <FrequencyHeatmap />
     </div>
   );
 };

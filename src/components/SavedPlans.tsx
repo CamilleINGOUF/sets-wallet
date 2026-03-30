@@ -1,12 +1,13 @@
+import { useRef } from 'react';
 import { useStore, actions, isDirty } from '../store/useStore';
 
-const handleExport = () => {
-  const json = actions.exportState();
+const handleExportPlan = () => {
+  const json = actions.exportPlan();
   const blob = new Blob([json], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'sets-wallet-export.json';
+  a.download = 'sets-wallet-plan.json';
   a.click();
   URL.revokeObjectURL(url);
 };
@@ -18,6 +19,19 @@ export const SavedPlans: React.FC = () => {
   const hasExercises = useStore(
     (s) => s.currentPlan.days.some((d) => d.exercises.length > 0)
   );
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = actions.importPlan(reader.result as string);
+      if (!result.ok) alert(result.error);
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  };
 
   const isOverwrite = savedPlans.some((p) => p.id === currentId);
 
@@ -66,9 +80,27 @@ export const SavedPlans: React.FC = () => {
         >
           {isOverwrite ? 'Save' : 'Save New'}
         </button>
-        <button className="export-btn" onClick={handleExport}>
-          Export JSON
+        <button className="export-btn" onClick={handleExportPlan}>
+          Export
         </button>
+        <button className="export-btn" onClick={() => fileInputRef.current?.click()}>
+          Import
+        </button>
+        <button
+          className="export-btn"
+          onClick={() => { const name = actions.generateDeload(); alert(`Created "${name}" in saved plans`); }}
+          disabled={!hasExercises}
+          title="Generate a deload version (compounds only, 50% sets)"
+        >
+          Deload
+        </button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".json"
+          onChange={handleImport}
+          style={{ display: 'none' }}
+        />
       </div>
       {savedPlans.length > 0 && (
         <ul className="plan-list">
